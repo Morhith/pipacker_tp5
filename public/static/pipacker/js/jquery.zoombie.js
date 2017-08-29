@@ -1,4 +1,55 @@
-
+(function ($) {
+    var types = ['DOMMouseScroll', 'mousewheel'];
+    $.event.special.mousewheel = {
+        setup: function () {
+            if (this.addEventListener) {
+                for (var i = types.length; i;) {
+                    this.addEventListener(types[--i], handler, false);
+                }
+            } else {
+                this.onmousewheel = handler;
+            }
+        },
+        teardown: function () {
+            if (this.removeEventListener) {
+                for (var i = types.length; i;) {
+                    this.removeEventListener(types[--i], handler, false);
+                }
+            } else {
+                this.onmousewheel = null;
+            }
+        }
+    };
+    $.fn.extend({
+        mousewheel: function (fn) {
+            return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
+        },
+        unmousewheel: function (fn) {
+            return this.unbind("mousewheel", fn);
+        }
+    });
+    function handler(event) {
+        var orgEvent = event || window.event, args = [].slice.call(arguments, 1), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
+        event = $.event.fix(orgEvent);
+        event.type = "mousewheel";
+        // Old school scrollwheel delta
+        if (event.originalEvent.wheelDelta) { delta = event.originalEvent.wheelDelta / 120; }
+        if (event.originalEvent.detail) { delta = -event.originalEvent.detail / 3; }
+        // New school multidimensional scroll (touchpads) deltas
+        deltaY = delta;
+        // Gecko
+        if (orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS) {
+            deltaY = 0;
+            deltaX = -1 * delta;
+        }
+        // Webkit
+        if (orgEvent.wheelDeltaY !== undefined) { deltaY = orgEvent.wheelDeltaY / 120; }
+        if (orgEvent.wheelDeltaX !== undefined) { deltaX = -1 * orgEvent.wheelDeltaX / 120; }
+        // Add event and delta to the front of the arguments
+        args.unshift(event, delta, deltaX, deltaY);
+        return $.event.handle.apply(this, args);
+    }
+})(jQuery);
 (function ($) {
     $.fn.zoombieLens = function (options) {
 
@@ -11,12 +62,12 @@
         var lensType = "background-position: 0px 0px;width: " + String(options.Size) + "px;height: " + String(options.Size)
             + "px;float: left;display: none;border-radius: " + String(options.Size / 2 + options.borderSize)
             + "px;border: " + String(options.borderSize) + "px solid " + options.borderColor
-            + ";background-repeat: no-repeat;position: absolute;";
+            + ";background-repeat: no-repeat;position: absolute;z-index:130";
 
         return this.each(function () {
             obj = $(this);
             var offset = $(this).offset();
-
+            var target_val = "";
             // Creating lens
             // obj..stop().animate({ "max-width": "180%", "max-height": "140%", marginTop: "-5%", marginLeft: "0%","z-index":1036 });
             
@@ -36,14 +87,14 @@
             }).appendTo($(this).parent());
             target.hide();
             target.css({ backgroundImage: "url('" + imageSrc + "') " });
-        	target.mousemove(setImage);
+            target.mousemove(setImage);
         	$(this).mousemove(setImage);
         	target.mouseleave(function(event) {
         		/* Act on the event */
         		target.hide();
         	});
             function setImage(e) {
-
+                target_val = e.clientY;
                 var leftPos = parseInt(e.pageX - offset.left);
                 var topPos = parseInt(e.pageY - offset.top);
                 target.hide();

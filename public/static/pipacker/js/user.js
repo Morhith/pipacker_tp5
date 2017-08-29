@@ -32,10 +32,12 @@
 						$.get(register_url,{"user_phone":$user_phone_text},function(data){
 							if (!$.isEmptyObject(data)) {
 								var redata = $.parseJSON(data);
-								if(0==redata.status){
-									console.log('用户名已存在!');	
+                                if (0 == redata.status) {
+                                    $(".lotips").eq(0).siblings("p.tipswords").remove();
 									$(".lotips").eq(0).removeClass("glyphicon-remove-circle").addClass("glyphicon-ok-circle");
-								}else{
+                                } else {
+                                    $(".lotips").eq(0).siblings("p.tipswords").remove();
+                                    $(".lotips").eq(0).before('<p class="tipswords">用户不存在!</p>');
 									$(".lotips").eq(0).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 									$user_phone_text ="";
 								}
@@ -43,11 +45,15 @@
 								alert("等待通信中...");
 							}
 						});
-					} else {
+                    } else {
+                        $(".lotips").eq(0).siblings("p.tipswords").remove();
+                        $(".lotips").eq(0).before('<p class="tipswords">输入正确的手机号码!</p>');
 						$(".lotips").eq(0).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 						$user_phone_text = '';
 					}
-				} else {
+                } else {
+                    $(".lotips").eq(0).siblings("p.tipswords").remove();
+                    $(".lotips").eq(0).before('<p class="tipswords">手机号码不能为空!</p>');
 					$(".lotips").eq(0).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 					$user_phone_text = '';
 				}
@@ -55,14 +61,19 @@
 			$user_pwd.on('blur',function() {
 				$user_pwd_text = $user_pwd.val();
 				if($user_pwd != "") {
-					 if(/^(\w){8,20}$/.test($user_pwd_text)) {
+                    if (/^(\w){8,20}$/.test($user_pwd_text)) {
+                        $(".lotips").eq(1).siblings("p.tipswords").remove();
 						$(".lotips").eq(1).removeClass("glyphicon-remove-circle").addClass("glyphicon-ok-circle");
 
-					} else {
+                     } else {
+                         $(".lotips").eq(1).siblings("p.tipswords").remove();
+                         $(".lotips").eq(1).before('<p class="tipswords">密码长度为8-12位!</p>');
 						$(".lotips").eq(1).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 						$user_pwd_text = '';
 					}
-				} else {
+                } else {
+                    $(".lotips").eq(1).siblings("p.tipswords").remove();
+                    $(".lotips").eq(1).before('<p class="tipswords">密码不能为空!</p>');
 					$(".lotips").eq(1).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 					$user_pwd_text = '';
 				}
@@ -90,14 +101,19 @@
 									console.log(localStorage);
 									window.location.reload();
 								} else if (1 == redata.status) {
-									alert("密码有误");
+                                    $(".lotips").eq(1).siblings("p.tipswords").remove();
+                                    $(".lotips").eq(1).before('<p class="tipswords">密码有误!</p>');
 								}
 							}
 						})
-					} else {
+                    } else {
+                        $(".lotips").eq(1).siblings("p.tipswords").remove();
+                        $(".lotips").eq(1).before('<p class="tipswords">密码不能为空!</p>');
 						$(".lotips").eq(1).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 					}
-				} else {
+                } else {
+                    $(".lotips").eq(0).siblings("p.tipswords").remove();
+                    $(".lotips").eq(0).before('<p class="tipswords">手机号不能为空!</p>');
 					$(".lotips").eq(0).removeClass("glyphicon-ok-circle").addClass("glyphicon-remove-circle");
 				}
 			})
@@ -117,22 +133,29 @@
 						$.get(register_url,{"user_phone":user_phone},function(data){
 							if (!$.isEmptyObject(data)) {
 								var redata = $.parseJSON(data);
-								if(0==redata.status){
-									console.log('用户名已存在!');
-									$user_tips.eq(0).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
-									user_phone="";
-								}
+                                if (0 == redata.status) {
+                                    $user_info.eq(0).siblings("p.tipswords").remove();
+                                    $user_info.eq(0).before('<p class="tipswords">用户已存在!</p>');
+                                    $user_tips.eq(0).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
+                                    user_phone = "";
+                                } else {
+                                    $user_info.eq(0).siblings("p.tipswords").remove();
+                                }
 							}else{
 								alert("等待通信中...");
 							}
 					});
-					}else{
+                    } else {
+                        $user_info.eq(0).siblings("p.tipswords").remove();
 						$user_tips.eq(0).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
-						user_phone="";
+                        user_phone = "";
+                        $user_info.eq(0).before('<p class="tipswords">输入正确的手机号!</p>');
 					}
-				}else{
+                } else {
+                    $user_info.eq(0).siblings("p.tipswords").remove();
 					$user_tips.eq(0).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
-					user_phone= '';
+                    user_phone = '';
+                    $user_info.eq(0).before('<p class="tipswords">手机号不能为空!</p>');
 				}
 					
 			});
@@ -140,13 +163,18 @@
 				user_pwd = $user_info.eq(2).val();;
 				if('' != user_pwd){
 					console.log(user_pwd.length);
-					if(user_pwd.length>7){
+                    if (/^(\w){8,20}$/.test(user_pwd)){
+                        $user_info.eq(2).siblings("p.tipswords").remove();
 						$user_tips.eq(2).removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle');
-					}else{
+                    } else {
+                        $user_info.eq(2).siblings("p.tipswords").remove();
 						$user_tips.eq(2).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
-						user_pwd = "";
+                        user_pwd = "";
+                        $user_info.eq(2).before('<p class="tipswords">密码至少有8位!</p>');
 					}
-				}else{
+                } else {
+                    $user_info.eq(2).siblings("p.tipswords").remove();
+                    $user_info.eq(2).before('<p class="tipswords">密码不能为空!</p>');
 					$user_tips.eq(2).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
 					user_pwd="";
 				}
@@ -155,13 +183,17 @@
 			$user_info.eq(3).on('blur',function(){					
 				user_repwd = $user_info.eq(3).val();;
 				if('' != user_repwd){
-					if(user_pwd==user_repwd){
+                    if (user_pwd == user_repwd) {
+                        $user_info.eq(3).siblings("p.tipswords").remove();
 						$user_tips.eq(3).removeClass('glyphicon-remove-circle').addClass('glyphicon-ok-circle');
-					}else{
+                    } else {
+                        $user_info.eq(3).siblings("p.tipswords").remove();
+                        $user_info.eq(3).before('<p class="tipswords">密码不一致!</p>');
 						$user_tips.eq(3).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
 						user_repwd="";
 					}
-				}else{
+                } else {
+                    $user_info.eq(3).siblings("p.tipswords").remove();
 					$user_tips.eq(3).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
 					user_repwd="";
 				}
@@ -187,19 +219,25 @@
 											$("#pp_reg").modal("hide");
 											$("#pp_login").modal("show");
 										}else{
-											console(redata.msg);
+                                            alert(redata.msg);
 										}
 									}else{
 										alert("与服务器通信失败...");
 									}
 								});
-						}else{
+                        } else {
+                            $user_info.eq(2).siblings("p.tipswords").remove();
+                            $user_info.eq(2).before('<p class="tipswords">密码不一致!</p>');
 							$user_tips.eq(2).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
 						}
-					}else{
+                    } else {
+                        $user_info.eq(3).siblings("p.tipswords").remove();
+                        $user_info.eq(3).before('<p class="tipswords">请再次输入密码!</p>');
 						$user_tips.eq(3).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
 					}
-				}else{
+                } else {
+                    $user_info.eq(0).siblings("p.tipswords").remove();
+                    $user_info.eq(0).before('<p class="tipswords">手机号不能为空!</p>');
 					$user_tips.eq(0).removeClass('glyphicon-ok-circle').addClass('glyphicon-remove-circle');
 				}
 			});

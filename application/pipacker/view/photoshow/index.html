@@ -62,7 +62,7 @@
         }
         .browse_photo {
             width: 70%;
-            max-height: 600px;
+            height: 100%;
             float: left;
         }
         /*comment or detail*/
@@ -141,7 +141,7 @@
         }
         .detail_com .thumbnails {
             width: 100%;
-            height:40%;
+            height:auto;
             margin-bottom: 25px;
         }
         .detail_com .thumbnails img {
@@ -309,17 +309,25 @@
             color: #aaa;
             padding: 10px;
         }
+          .floor .author_photo .author_photo_list {
+              -moz-column-count: 4; /* Firefox */
+              -webkit-column-count: 4; /* Safari 和 Chrome */
+              column-count: 4;
+              -moz-column-gap: 1em;
+              -webkit-column-gap: 1em;
+              column-gap: 1em;
+          }
         .floor .author_photo .author_photo_list li {
-          float: left;
-          width: 110px;
-          height: 110px;
-          margin-right: 5px;
-          margin-bottom: 10px;
+            margin: 0 0 10px 0;
+            -moz-page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+            break-inside: avoid;
         }
-        .floor .author_photo .author_photo_list li img {
-          width: 100%;
-          height: 100%;
-        }
+          .floor .author_photo .author_photo_list li img {
+              width: 100%;
+              margin-bottom: 10px;
+              cursor: pointer;
+          }
         .floor .mylike_photo {
           text-align: left;
           padding: 10px;
@@ -365,15 +373,16 @@
         .browse_big_img{
           clear: both;
           width:100%;
-          height:400px;
+          height:70%;
           margin-top: 120px;
           position: relative;
           border-right: 1px solid #aaa;
         }
         .browse_big_img div.img_middle{
           /*vertical-align: middle;*/
-          text-align: center;
-          height:400px;
+            text-align: center;
+            height: 100%;
+            /* margin: auto; */
         }
         .browse_big_img div.img_middle img {
           position: relative;
@@ -381,7 +390,7 @@
         }
         .show_content_small_img{
           max-width:100%;
-          max-height:80%;
+          max-height:70%;
         }
         .hf_btn{
         position: absolute;        
@@ -401,14 +410,9 @@
           margin-top: 10px;
           overflow: hidden; 
           position: absolute;
-          bottom: -16%;
+          bottom:0;
         }
         ul.browse_nav_small_img{
-          list-style: none;
-          width:100%;
-          margin-top: 10px;
-          height: 14%;
-
           overflow: hidden; 
         }
         ul.browse_nav_small_img li{
@@ -475,7 +479,7 @@
     <div class="browse_photo">
             <div class="browse_big_img">
                     <div class="imgnum browsenum"><span>1</span>/<span></span></div>
-                   <div class="img_middle">
+                   <div class="img_middle" style="margin:10% 0;">
                       <img src="" data-id="" class="show_content_small_img">                     
                       <!-- <pre>$('.browse_big_img').children(".img_middle").find("img").zoombieLens({ Size: 200 });</pre> -->
                     </div>
@@ -510,11 +514,12 @@
       </div>
     </div>
     <div class="detail_com">
-      <h3 style="font-family: '宋体';">照片信息</h3>
+      <h3 style="font-family: '宋体';">图片简介</h3>
       <div class="thumbnails">
         
       </div>
       <div class="info">
+        <p>图片信息</p>
           <!-- <p><span class="color888;">查看</span><br><span class="colorccc;">10086+</span></p>
           <p><span class="color888;">类型</span><br><span class="colorccc;">肖像</span></p> -->
           <ul class="info_list">
@@ -554,6 +559,7 @@
                         </div>
                       </div>
                       <div class="author_photo">
+                        <p>他的收藏</p>
                         <ul class="author_photo_list">
                           <!-- <li><a href=""><img src="__PUBLIC_PIPACKER__/pipacker/images/3.jpg" alt=""></a></li> -->
                         </ul>
@@ -627,7 +633,7 @@ var $show_div = $('.comORdet');
 var $detail_com = $('.detail_com');
 var $nav_a_author = $('.nav_a_author');
 var $follow = $("span.follow");
-var posnum = 200;
+var posnum = 2;
 var $like_btn = $(".like_list");
 var $author_photo_list = $(".author_photo_list");
 var $comment_container = $(".comment_container");
@@ -663,19 +669,47 @@ $author_photo_list.on("click",function(el){
 $like_btn.on("click",function(e){
   var this_elm = $(e.target);
   if(this_elm.hasClass('glyphicon-zoom-in')){
-      if(posnum<400){
-        posnum=posnum+100;
+      if(posnum<4){
+        posnum=posnum+1;
       }
   }else if(this_elm.hasClass('glyphicon-zoom-out')){
-      if(posnum>100){
-        posnum=posnum-100;
+      if(posnum>1){
+        posnum=posnum-1;
       }
   }
     });
     //放大镜
-$browse_img.children(".img_middle").find("img").mouseenter(function () {
-    // $(this).stop().animate({ "max-width": "180%", "max-height": "140%", marginTop: "-5%", marginLeft: "0%","z-index":1036 });
-    $(this).zoombieLens({Size:posnum,imageSrc: $(this).attr("src")});
+
+    var explorer = navigator.userAgent;
+    $browse_img.children(".img_middle").find("img").mouseenter(function () {
+        //ie 
+        if (explorer.indexOf("MSIE") >= 0) {
+            $(this).stop().animate({ "max-width": 90 * posnum + "%", "max-height": 70 * posnum + "%", marginTop: "-10%", marginLeft: "0%", "z-index": 1036 });
+        }
+        //Edge
+        else if (explorer.indexOf("Edge")>=0) {
+            $(this).stop().animate({ "max-width": 90 * posnum + "%", "max-height": 70 * posnum + "%", marginTop: "-10%", marginLeft: "0%", "z-index": 1036 });
+        }
+        //firefox 
+        else if (explorer.indexOf("Firefox") >= 0) {
+            $(this).stop().animate({ "max-width": 90 * posnum + "%", "max-height": 70 * posnum + "%", marginTop: "-10%", marginLeft: "0%", "z-index": 1036 });
+        }
+        //Chrome
+        else if (explorer.indexOf("Chrome") >= 0) {
+            $(this).zoombieLens({ Size: posnum*100, imageSrc: $(this).attr("src") });
+        }
+        //Opera
+        else if (explorer.indexOf("Opera") >= 0) {
+            $(this).zoombieLens({ Size: posnum * 100, imageSrc: $(this).attr("src") });
+        }
+        //Safari
+        else if (explorer.indexOf("Safari") >= 0) {
+            $(this).zoombieLens({ Size: posnum * 100, imageSrc: $(this).attr("src") });
+        }
+        //Netscape
+        else if (explorer.indexOf("Netscape") >= 0) {
+            $(this).stop().animate({ "max-width": 90 * posnum + "%", "max-height": 70 * posnum + "%", marginTop: "-10%", marginLeft: "0%", "z-index": 1036 });
+        }
 }).mouseleave(function () {
     $(this).stop().animate({ "max-width": "100%", "max-height": "80%", marginTop:0, marginLeft: 0,"z-index":0 })
 });
@@ -686,7 +720,7 @@ $browse_img.children(".img_middle").find("img").mouseenter(function () {
         var text = '';
         // $time = $time === NULL || $time > time() ? time() : intval($time);
         var t = parseInt((new Date().getTime() - new Date(parseInt(nS)*1000))/1000); //时间差 （秒）
-        console.log(t/(2592000));
+        // console.log(t/(2592000));
         // console.log(new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' '));
        if(t < 60){
           text = '刚刚'; 
@@ -706,8 +740,8 @@ $browse_img.children(".img_middle").find("img").mouseenter(function () {
        }else{          
           text = "1年以前"; //一年以前
        }
-         
-        console.log(text);
+
+        // console.log(text);
         return text;
   }
 
@@ -715,35 +749,40 @@ $browse_img.children(".img_middle").find("img").mouseenter(function () {
     $comment_text_btn.on("click", function () {
         if (user_option.haslogin()) {
             var val = $comment_text.val();
-            var comdata = {
-                "user_id": localStorage.getItem("user_id"),
-                "comment": val,
-                "works_id": localStorage.getItem("apic_id")
-            };
-            //评论的回调函数
-            $.post("{:url('/comment')}", comdata, function (data) {
-                if (!$.isEmptyObject(data)) {
-                    redata = $.parseJSON(data);
-                    str = '<div class="comment_connent">' +
-                        '<div class="media">' +
-                        '<div class="media-left">' +
-                        '<img class="media-object" src="'+localStorage.getItem("user_photo")+'" alt="">' +
-                        '</div>' +
-                        '<div class="media-body">' +
-                        '<h5 class="media-heading">' + localStorage.getItem("user_name") + '<span style="font-size: 12px; vertical-align: text-top; display: inline-block;float:right;">' + getLocalTime(redata.rearray.update_time) + '</span></h5>' +
-                        '<p>' + comdata.comment + '<span class="del_comment" data-id="'+redata.rearray.comment_id+'" style="font-size: 12px; vertical-align: text-top; display: inline-block;position: relative;float:right;">删除</span></p>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div> ';
-                    $comment_container.prepend(str);
-                }
-            });
+            if ("" != val) {
+                var comdata = {
+                    "user_id": localStorage.getItem("user_id"),
+                    "comment": val,
+                    "works_id": localStorage.getItem("apic_id")
+                };
+                //评论的回调函数
+                $.post("{:url('/comment')}", comdata, function (data) {
+                    if (!$.isEmptyObject(data)) {
+                        redata = $.parseJSON(data);
+                        str = '<div class="comment_connent">' +
+                            '<div class="media">' +
+                            '<div class="media-left">' +
+                            '<img class="media-object" src="' + localStorage.getItem("user_photo") + '" alt="">' +
+                            '</div>' +
+                            '<div class="media-body">' +
+                            '<h5 class="media-heading">' + localStorage.getItem("user_name") + '<span style="font-size: 12px; vertical-align: text-top; display: inline-block;float:right;">' + getLocalTime(redata.rearray.update_time) + '</span></h5>' +
+                            '<p>' + comdata.comment + '<span class="del_comment" data-id="' + redata.rearray.comment_id + '" style="font-size: 12px; vertical-align: text-top; display: inline-block;position: relative;float:right;">删除</span></p>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div> ';
+                        $comment_container.prepend(str);
+                        $comment_text.val("");
+                    }
+                });
+               } else {
+
+                    }
         } else {
             $("#pp_login").modal("show");
         }
        
     });
-    $follow.on('click', function () {
+    $follow.on('click', function (e) {
         //关注回调函数
         if (user_option.haslogin()) {
             if ($follow.hasClass('btn-success')) {
@@ -777,7 +816,7 @@ $browse_img.children(".img_middle").find("img").mouseenter(function () {
         } else {
             $("#pp_login").modal("show");
         }
-
+        e.stopPropagation();
     });
     $collection.on('click', function () {
         //收藏回调函数
@@ -907,7 +946,6 @@ $browse_img.children(".img_middle").find("img").mouseenter(function () {
           pic=$.parseJSON(sessionStorage.getItem("allpic"))[num];
           // $('.browsenum').text(redata.rearray.count);
           $browse_img.find("img").eq(0).attr("src",pic.works_src);
-          $browse_img.find("img").eq(0).zoombieLens({Size:200,imageSrc: $(this).attr("src")});
           $browse_img.find("img").eq(0).attr("data-id", num);
           $collection.removeClass("text_red");
           if (0 != pic.collect_val) {
@@ -994,7 +1032,6 @@ $browse_img.children(".img_middle").find("img").mouseenter(function () {
               $browse_nav_small_img.html(str);
               $browsenum.find("span").eq(1).text(redata.rearray.allpic.length);
               $browse_img.find("img").eq(0).attr("src",redata.rearray.pic.works_src);
-              $browse_img.find("img").eq(0).zoombieLens({Size:200,imageSrc: $(this).attr("src")});
               $browse_img.find("img").eq(0).attr("data-id",0);
               $thumbnails.text(redata.rearray.pic.works_profile);
               $para.eq(0).text(redata.rearray.pic.works_browse);
